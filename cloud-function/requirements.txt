@@ -1,0 +1,8 @@
+functions-framework==3.*
+langchain
+langchain-community
+langchain-openai
+openai
+sqlalchemy
+sqlalchemy-bigquery
+google-cloud-bigquery
