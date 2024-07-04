@@ -1,0 +1,328 @@
+<html>
+<head></head>
+<body>
+<title>RA Databot Test</title>
+<style>
+.chatbot-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-image: url('images/agent.png?format=1500w');
+  background-size: cover;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 1000;
+  animation: bounce 5s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.chatbot-dialog {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 350px;
+  height: 500px;
+  background-color: #FFFFFF;
+  border: 1px solid #D9DCE0;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+.chatbot-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.chatbot-close {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.chatbot-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.chatbot-message {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+
+.chatbot-message.bot {
+  justify-content: flex-start;
+}
+
+.chatbot-message.user {
+  justify-content: flex-end;
+}
+
+.chatbot-bubble {
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #F7F9FA;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.chatbot-bubble.bot {
+  background-color: #F7F9FA;
+}
+
+.chatbot-bubble.user {
+  background-color: #4F5FFE;
+  color: white;
+}
+
+.chatbot-input-container {
+  display: flex;
+  align-items: center;
+}
+
+.chatbot-input {
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: #F1F3F4;
+  margin-right: 10px;
+  outline: none; /* Remove the dark black line */
+}
+
+.chatbot-input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+}
+
+.chatbot-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.chatbot-button {
+  background: none;
+  border: none;
+  color: #4F5FFE;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.chatbot-button:focus {
+  outline: none;
+}
+
+.chatbot-message.bot .chatbot-icon-bot {
+  margin-right: 10px;
+}
+
+.chatbot-message.user .chatbot-icon-user {
+  margin-left: 10px;
+}
+
+.chatbot-icon-bot {
+  width: 30px;
+  height: 30px;
+  background-image: url('images/agent.png');
+  background-size: cover;
+}
+
+.chatbot-icon-user {
+  width: 30px;
+  height: 30px;
+  background-image: url('images/user.png');
+  background-size: cover;
+}
+
+.chatbot-submit-icon {
+  width: 30px;
+  height: 30px;
+  background-image: url('images/go.png');
+  background-size: cover;
+  border: none;
+  cursor: pointer;
+}
+
+.chatbot-ellipsis {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+  text-align: center;
+  animation: ellipsis 1s steps(4, end) infinite;
+}
+
+@keyframes ellipsis {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+  100% { content: ''; }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  let chatHistory = '';
+
+  const chatbotIcon = document.createElement('div');
+  chatbotIcon.classList.add('chatbot-icon');
+  document.body.appendChild(chatbotIcon);
+
+  const chatbotDialog = document.createElement('div');
+  chatbotDialog.classList.add('chatbot-dialog');
+  chatbotDialog.style.display = 'none'; // Ensure dialog is hidden initially
+  document.body.appendChild(chatbotDialog);
+
+  const chatbotHeader = document.createElement('div');
+  chatbotHeader.classList.add('chatbot-header');
+  chatbotDialog.appendChild(chatbotHeader);
+
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('chatbot-close');
+  closeButton.innerHTML = '&times;';
+  chatbotHeader.appendChild(closeButton);
+
+  const chatbotMessages = document.createElement('div');
+  chatbotMessages.classList.add('chatbot-messages');
+  chatbotDialog.appendChild(chatbotMessages);
+
+  const inputContainer = document.createElement('div');
+  inputContainer.classList.add('chatbot-input-container');
+  chatbotDialog.appendChild(inputContainer);
+
+  const chatbotInput = document.createElement('input');
+  chatbotInput.classList.add('chatbot-input');
+  chatbotInput.setAttribute('type', 'text');
+  chatbotInput.setAttribute('placeholder', 'type question here');
+  inputContainer.appendChild(chatbotInput);
+
+  const submitButton = document.createElement('button');
+  submitButton.classList.add('chatbot-submit-icon');
+  submitButton.addEventListener('click', function() {
+    chatbotInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+  });
+  inputContainer.appendChild(submitButton);
+
+  chatbotIcon.addEventListener('click', () => {
+    chatbotIcon.style.display = 'none';
+    chatbotDialog.style.display = 'flex';
+    chatbotDialog.style.opacity = '0'; // Set initial opacity for fade-in
+    chatHistory = ''; // Reset chat history
+    chatbotMessages.innerHTML = ''; // Clear previous messages
+    setTimeout(() => {
+      chatbotDialog.style.opacity = '1'; // Fade-in effect
+      addMessage('Ask me any question about your data, for example "How much revenue did we make in June 2024?"', 'bot');
+    }, 0);
+  });
+
+  closeButton.addEventListener('click', () => {
+    chatbotDialog.style.display = 'none';
+    chatbotIcon.style.display = 'block';
+    chatHistory = ''; // Reset chat history
+  });
+
+  chatbotInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const userMessage = chatbotInput.value;
+      if (userMessage.trim() !== '') {
+        addMessage(userMessage, 'user');
+        submitQuestion(userMessage);
+      }
+      chatbotInput.value = '';
+    }
+  });
+
+  function addMessage(text, sender, isTemporary = false) {
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('chatbot-message', sender);
+
+    const messageBubble = document.createElement('div');
+    messageBubble.classList.add('chatbot-bubble', sender);
+    if (isTemporary) {
+      const ellipsisSpan = document.createElement('span');
+      ellipsisSpan.classList.add('chatbot-ellipsis');
+      messageBubble.appendChild(ellipsisSpan);
+      messageBubble.innerHTML = 'thinking...';
+    } else {
+      messageBubble.innerHTML = text;
+    }
+
+    const icon = document.createElement('div');
+    if (sender === 'bot') {
+      icon.classList.add('chatbot-icon-bot');
+      messageContainer.appendChild(icon);
+      messageContainer.appendChild(messageBubble);
+      if (!isTemporary) {
+        chatHistory += `Bot: ${text}\n`; // Append bot response to chat history
+      }
+    } else {
+      icon.classList.add('chatbot-icon-user');
+      messageContainer.appendChild(messageBubble);
+      messageContainer.appendChild(icon);
+      chatHistory += `User: ${text}\n`; // Append user question to chat history
+    }
+
+    chatbotMessages.appendChild(messageContainer);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    return messageBubble;
+  }
+
+  function submitQuestion(question) {
+    const tempBubble = addMessage('', 'bot', true);
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: `${chatHistory}User: ${question}` })
+    };
+
+    fetch('https://europe-west2-ra-development.cloudfunctions.net/ra-databot', requestOptions)
+      .then((response) => response.text())
+      .then((data) => {
+        console.log('Received data:', data);
+        tempBubble.innerHTML = data; // Replace the temporary bubble content with the actual response
+        chatHistory += `Bot: ${data}\n`; // Append bot response to chat history
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        tempBubble.innerHTML = 'Sorry, I could not get the answer. Please try again later.';
+      });
+  }
+});
+</script>
+</body>
+</html>

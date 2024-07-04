@@ -6,7 +6,7 @@
   right: 20px;
   width: 60px;
   height: 60px;
-  background-image: url('https://images.squarespace-cdn.com/content/v1/63b6c9e3cbf92e7d56375d12/d932f8d9-d05b-40cf-9fbd-8307131bada5/ezgif-2-2c0ba52822.gif?format=1500w');
+  background-image: url('file:///agent.png?format=1500w');
   background-size: cover;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   cursor: pointer;
@@ -153,21 +153,21 @@
 .chatbot-icon-bot {
   width: 30px;
   height: 30px;
-  background-image: url('https://www.rittmananalytics.com/s/agent.png');
+  background-image: url('file:///agent.png');
   background-size: cover;
 }
 
 .chatbot-icon-user {
   width: 30px;
   height: 30px;
-  background-image: url('https://www.rittmananalytics.com/s/user.png');
+  background-image: url('file:///user.png');
   background-size: cover;
 }
 
 .chatbot-submit-icon {
   width: 30px;
   height: 30px;
-  background-image: url('https://www.rittmananalytics.com/s/go.png');
+  background-image: url('file:///go.png');
   background-size: cover;
   border: none;
   cursor: pointer;
