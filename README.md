@@ -61,7 +61,7 @@ This is a Google Cloud Function that uses LangChain and OpenAI to provide answer
 
 5. To test the chatbot front-end, open the index.html file with your browser and click on the chatbot icon in the bottom right-hand corner of the screen. 
 
-![screenshot](images/chatbot.png | width=100)
+<img src="images/chatbot.png" width="100">
 
 The chatbot dialog will then be displayed and you can start asking questions of your data.
 
