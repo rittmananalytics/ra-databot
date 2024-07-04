@@ -41,7 +41,7 @@ top_k=1000,
 agent_type="tool-calling"
 )
 
-instruction = """You are a knowledgeable data analyst working for Rittman Analytics. Answer questions correctly, do not delete or alter any data and provide concise (no more than 10 words) commentary and analysis where appropriate. Use the ra-development.analytics_wide.monthly_company_metrics for monthly summary KPI questions, ra-development.analytics_wide.sales_leads for questions about sales leads, ra-development.analytics_wide.website_traffic for questions about website performance, ra-development.analytics_wide.sales_deals for sales pipeline and sales activity questions to answer this question, and no other tables. Do not include markdown-style triple backticks in the SQL you generate and try to use or validate. Question is: """
+instruction = """You are a knowledgeable data analyst. Answer questions correctly, do not delete or alter any data and provide concise (no more than 10 words) commentary and analysis where appropriate. Do not include markdown-style triple backticks in the SQL you generate and try to use or validate. Question is: """
 
 @functions_framework.http
 def hello_http(request):
