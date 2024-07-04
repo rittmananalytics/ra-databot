@@ -61,7 +61,7 @@ This is a Google Cloud Function that uses LangChain and OpenAI to provide answer
 
 5. To test the chatbot front-end, open the index.html file with your browser and click on the chatbot icon in the bottom right-hand corner of the screen. 
 
-![screenshot](images/chatbot.png)
+![screenshot](images/chatbot.png | width=100)
 
 The chatbot dialog will then be displayed and you can start asking questions of your data.
 
@@ -81,7 +81,7 @@ The chatbot dialog will then be displayed and you can start asking questions of 
     ```
 ## How does it work?
 
-![architecture](architecture.png)
+![architecture](images/architecture.png)
 
 1. User types in a question into the chatbot pop-up dialog interface, for example “How much were our sales in May 2024?”
 2. Chatbot Javascript sends the question to the chatbot back-end service via a REST API call
