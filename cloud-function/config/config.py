@@ -46,13 +46,7 @@ secret_value_gcp_service_account = access_secret_version(project_id, secret_id, 
 GCP_CREDENTIALS = encode_to_base64(secret_value_gcp_service_account)
 os.environ["GCP_CREDENTIALS"] = GCP_CREDENTIALS
 
-
-
 # Set openai model variable
 OPEN_AI_MODEL="gpt-4-turbo"
 os.environ["OPEN_AI_MODEL"] = OPEN_AI_MODEL
 
-# Uncomment to test print secrets
-print(OPENAI_API_KEY)
-print(GCP_CREDENTIALS)
-print(OPEN_AI_MODEL)
