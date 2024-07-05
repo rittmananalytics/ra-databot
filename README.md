@@ -29,8 +29,8 @@ This is a Google Cloud Function that uses LangChain and OpenAI to provide answer
     --trigger-http \
     --allow-unauthenticated \
     --region YOUR_REGION \
-    --set-env-vars GCP_PROJECT=YOUR_PROJECT_ID,BQ_DATASET=YOUR_DATASET,GCP_CREDENTIALS=YOUR_GCP_CREDENTIALS,OPEN_AI_MODEL=YOUR_OPEN_AI_MODEL,
-    OPENAI_API_KEY=YOUR_OPENAI_KEY
+    --set-env-vars GCP_PROJECT=$GCP_PROJECT,BQ_DATASET=$BQ_DATASET,GCP_CREDENTIALS=$GCP_CREDENTIALS,OPEN_AI_MODEL=$OPEN_AI_MODEL,
+    OPENAI_API_KEY=$OPENAI_API_KEY
     ```
 
 3. Test the cloud function by using cURL to send a question:
