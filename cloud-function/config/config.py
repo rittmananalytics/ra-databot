@@ -14,7 +14,7 @@ def access_secret_version(project_id, secret_id, version_id):
 
 # Set secrets manager variables
 project_id = "ra-development"
-secret_id = "ra-howler-prototype-openapi-key"
+secret_id = "ra-openai-api-key"
 version_id = "latest"
 
 # Set environment variable openai_api_key
@@ -38,14 +38,21 @@ def encode_to_base64(secret_value):
 
 # Set secrets manager variables
 project_id = "ra-development"
-secret_id = "ra-howler-prototype-gcp-service-account-creds"
+secret_id = "ra-langchain-service-account"
 version_id = "latest"
 
 # Set base64 encoded environment variable gcp_credentials
 secret_value_gcp_service_account = access_secret_version(project_id, secret_id, version_id)
 GCP_CREDENTIALS = encode_to_base64(secret_value_gcp_service_account)
-os.environ["GOOGLE_APPLICATION_CREDENTIALS_BASE64"] = GCP_CREDENTIALS
+os.environ["GCP_CREDENTIALS"] = GCP_CREDENTIALS
 
-# Test print secrets
-# print(OPENAI_API_KEY)
-# print(GCP_CREDENTIALS)
+
+
+# Set openai model variable
+OPEN_AI_MODEL="gpt-4-turbo"
+os.environ["OPEN_AI_MODEL"] = OPEN_AI_MODEL
+
+# Uncomment to test print secrets
+print(OPENAI_API_KEY)
+print(GCP_CREDENTIALS)
+print(OPEN_AI_MODEL)
