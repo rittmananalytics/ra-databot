@@ -10,7 +10,7 @@ from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 from langchain.sql_database import SQLDatabase
 from langchain_openai import ChatOpenAI
 from langchain.agents import AgentExecutor
-
+from config.config import *
 
 project = os.environ["GCP_PROJECT"]
 dataset = os.environ["BQ_DATASET"]

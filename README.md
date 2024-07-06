@@ -10,6 +10,34 @@ This is a Google Cloud Function that uses LangChain and OpenAI to provide answer
 - Python 3.10+
 - A Google Cloud project with billing enabled
 - A BigQuery dataset
+- Environment variables set in Google Cloud Secrets Manager. 
+
+## Environment Variables
+
+#### Secrets Manager
+- The package uses [Google Cloud Secrets Manager](https://cloud.google.com/security/products/secret-manager) to store environment variables.  
+- Functions in the config.py will to get the values for the Cloud Function to run.  
+- A sample .env template is included in the root of the package (.env_local_environment_template) for local development.  
+- See the Google Cloud [Quickstart](https://cloud.google.com/secret-manager/docs/create-secret-quickstart) documentation for further details.
+
+#### OpenAI API Key
+To obtain an API key for your OpenAI ChatGPT account, follow these steps:
+
+1. Log in to OpenAI:
+- Go to the OpenAI website.
+- Click on "Sign In" and enter your credentials to log in to your account.
+
+2. Navigate to API Keys:
+- Once logged in, select the API menu (rather than ChatGPT).
+
+3. Generate a New API Key:
+- Navigate to the API Keys section, click on "Create new secret key".
+- Enter a name for your key to identify it later and click "Create key".
+- Your new API key will be displayed. Make sure to copy it and store it in a secure place because you won't be able to view it again.
+
+4. Use the API Key in Your Application:
+- You can now use this API key to authenticate requests to the OpenAI API. 
+- Set the key in your environment variables in Google Cloud Secrets Manager as 'OPENAI_API_KEY' and add the key to your local '.env' file if needed for local development.
 
 ## Setup
 
@@ -29,8 +57,8 @@ This is a Google Cloud Function that uses LangChain and OpenAI to provide answer
     --trigger-http \
     --allow-unauthenticated \
     --region YOUR_REGION \
-    --set-env-vars GCP_PROJECT=YOUR_PROJECT_ID,BQ_DATASET=YOUR_DATASET,GCP_CREDENTIALS=YOUR_GCP_CREDENTIALS,OPEN_AI_MODEL=YOUR_OPEN_AI_MODEL,
-    OPENAI_API_KEY=YOUR_OPENAI_KEY
+    --set-env-vars GCP_PROJECT=$GCP_PROJECT,BQ_DATASET=$BQ_DATASET,GCP_CREDENTIALS=$GCP_CREDENTIALS,OPEN_AI_MODEL=$OPEN_AI_MODEL,
+    OPENAI_API_KEY=$OPENAI_API_KEY
     ```
 
 3. Test the cloud function by using cURL to send a question:
