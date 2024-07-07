@@ -21,7 +21,7 @@ This is a Google Cloud Function that uses LangChain and OpenAI to provide answer
 - See the Google Cloud [Quickstart](https://cloud.google.com/secret-manager/docs/create-secret-quickstart) documentation for further details.
 
 #### OpenAI API Key
-To obtain an API key for your OpenAI ChatGPT account, follow these steps:
+To obtain an API key for your OpenAI API account, follow these steps:
 
 1. Log in to OpenAI:
 - Go to the OpenAI website.
