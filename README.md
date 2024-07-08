@@ -107,7 +107,7 @@ The chatbot dialog will then be displayed and you can start asking questions of 
     <link rel="stylesheet" href="https://path/to/your/chatbot.css">
     <script src="https:////path/to/your/chatbot.js">
     ```
-## How does it work?
+# How does it work?
 
 ![architecture](images/architecture.png)
 
