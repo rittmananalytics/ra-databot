@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   inputContainer.appendChild(submitButton);
 
+  const userId = document.getElementById('chatbot-button').getAttribute('data-user-id'); // Retrieve user ID from data attribute
+
   chatbotIcon.addEventListener('click', () => {
     chatbotIcon.style.display = 'none';
     chatbotDialog.style.display = 'flex';
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
     chatbotMessages.innerHTML = ''; // Clear previous messages
     setTimeout(() => {
       chatbotDialog.style.opacity = '1'; // Fade-in effect
-      addMessage('Ask me any question about your data, for example "How much revenue did we make in June 2024?"', 'bot');
+      addMessage('Hi '+userId+', ask me any question about your data?"', 'bot');
     }, 0);
   });
 
@@ -111,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: `${chatHistory}User: ${question}` })
+      body: JSON.stringify({ user_id: userId, question: `${chatHistory}User: ${question}` })  // Include user ID in the request body
     };
 
     fetch('https://europe-west2-ra-development.cloudfunctions.net/ra-databot', requestOptions)

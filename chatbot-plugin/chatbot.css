@@ -6,7 +6,7 @@
   right: 20px;
   width: 60px;
   height: 60px;
-  background-image: url('file:///agent.png?format=1500w');
+  background-image: url('images/agent.png?format=1500w');
   background-size: cover;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   cursor: pointer;
@@ -153,21 +153,21 @@
 .chatbot-icon-bot {
   width: 30px;
   height: 30px;
-  background-image: url('file:///agent.png');
+  background-image: url('images/agent.png');
   background-size: cover;
 }
 
 .chatbot-icon-user {
   width: 30px;
   height: 30px;
-  background-image: url('file:///user.png');
+  background-image: url('images/user.png');
   background-size: cover;
 }
 
 .chatbot-submit-icon {
   width: 30px;
   height: 30px;
-  background-image: url('file:///go.png');
+  background-image: url('images/go.png');
   background-size: cover;
   border: none;
   cursor: pointer;
