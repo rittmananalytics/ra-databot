@@ -112,11 +112,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+      'Content-Type': 'application/json',
+      'X-API-Key': 'YOUR_API_KEY' 
+    },
+      
       body: JSON.stringify({ user_id: userId, question: `${chatHistory}User: ${question}` })  // Include user ID in the request body
     };
 
-    fetch('https://europe-west2-ra-development.cloudfunctions.net/ra-databot', requestOptions)
+    fetch('GOOGLE_CLOUD_FUNCTION_ENDPOINT', requestOptions)
       .then((response) => response.text())
       .then((data) => {
         console.log('Received data:', data);
