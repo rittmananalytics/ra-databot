@@ -247,11 +247,9 @@ def hello_http(request):
 
 To create the API_KEY secret, we followed these steps:
 
-1. Create an API key:
-1.1 Generate a secure, random string to use as your API key.
-2. Store the API key in Google Cloud Secret Manager:
-2.1 Go to the Secret Manager in the Google Cloud Console.
-2.2 Create a new secret named "API_KEY" and store your generated API key as its value.
+1. Create a secure, random string to use as your API key.
+2. Go to the Secret Manager in the Google Cloud Console.
+3. Create a new secret named "API_KEY" and store your generated API key as its value.
 
 The chatbot.jss file was updated to call the cloud function REST API:
 
