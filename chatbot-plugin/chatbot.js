@@ -39,8 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
     chatbotInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
   });
   inputContainer.appendChild(submitButton);
-
+  
   const userId = document.getElementById('chatbot-button').getAttribute('data-user-id'); // Retrieve user ID from data attribute
+
 
   chatbotIcon.addEventListener('click', () => {
     chatbotIcon.style.display = 'none';
@@ -114,13 +115,12 @@ document.addEventListener('DOMContentLoaded', function () {
       method: 'POST',
       headers: { 
       'Content-Type': 'application/json',
-      'X-API-Key': 'YOUR_API_KEY' 
-    },
-      
+      'X-API-Key': 'API_KEY' 
+      },
       body: JSON.stringify({ user_id: userId, question: `${chatHistory}User: ${question}` })  // Include user ID in the request body
     };
 
-    fetch('GOOGLE_CLOUD_FUNCTION_ENDPOINT', requestOptions)
+    fetch('YOUR_REGION-YOUR_PROJECT_ID/ra-databot', requestOptions)
       .then((response) => response.text())
       .then((data) => {
         console.log('Received data:', data);
