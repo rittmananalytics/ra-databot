@@ -2,14 +2,14 @@
  
 # RA Databot Cloud Function
 
-This is a Google Cloud Function that uses LangChain and OpenAI to provide answers to specific data-related questions.
+This is a Google Cloud Function that uses LangChain with the Looker SQL Agent and OpenAI to provide answers to specific data-related questions.
 
 ## Prerequisites
 
 - Google Cloud SDK
 - Python 3.10+
 - A Google Cloud project with billing enabled
-- A BigQuery dataset
+- Access to a Looker instance with the SQL Interface enabled
 - Environment variables set in Google Cloud Secrets Manager. 
 
 ## Environment Variables
@@ -51,14 +51,13 @@ To obtain an API key for your OpenAI API account, follow these steps:
 2. Deploy the Cloud Function:
 
     ```sh
-    gcloud functions deploy ra-databot \
-    --gen2 \
-    --runtime python310 \
-    --trigger-http \
-    --allow-unauthenticated \
-    --region YOUR_REGION \
-    --set-env-vars GCP_PROJECT=$GCP_PROJECT,BQ_DATASET=$BQ_DATASET,GCP_CREDENTIALS=$GCP_CREDENTIALS,OPEN_AI_MODEL=$OPEN_AI_MODEL,
-    OPENAI_API_KEY=$OPENAI_API_KEY
+     gcloud functions deploy ra-databot \
+     --gen2 \
+     --runtime python310 \
+     --trigger-http \
+     --allow-unauthenticated \
+     --region YOUR_REGION \
+     --set-env-vars GCP_PROJECT=$GCP_PROJECT,LOOKER_INSTANCE_URL=$LOOKER_INSTANCE_URL,LOOKML_MODEL_NAME=$LOOKML_MODEL_NAME,LOOKER_CLIENT_ID=$LOOKER_CLIENT_ID,LOOKER_CLIENT_SECRET=$LOOKER_CLIENT_SECRET,LOOKER_JDBC_DRIVER_PATH=$LOOKER_JDBC_DRIVER_PATH,OPEN_AI_MODEL=$OPEN_AI_MODEL,OPENAI_API_KEY=$OPENAI_API_KEY
     ```
 
 3. Test the cloud function by using cURL to send a question:
@@ -118,10 +117,10 @@ The chatbot dialog will then be displayed and you can start asking questions of 
 ```
     “You are a knowledgeable data analyst working for Rittman Analytics. Answer questions correctly, do not delete or alter any data and provide concise (no more than 10 words) commentary and analysis where appropriate. Use the 
 
-    ra-development.analytics_wide.monthly_company_metrics for monthly summary KPI questions, 
-    ra-development.analytics_wide.sales_leads for questions about sales leads,
-    ra-development.analytics_wide.website_traffic for questions about website performance,
-    ra-development.analytics_wide.sales_deals for sales pipeline and sales activity questions 
+     analytics.monthly_company_metrics explore for monthly summary KPI questions,
+     analytics.sales_leads explore for questions about sales leads,
+     analytics.website_traffic explore for questions about website performance,
+     analytics.sales_deals explore for sales pipeline and sales activity questions
 
     to answer this question, and no other tables. Do not include markdown-style triple backticks in the SQL you generate and try to use or validate. Question is:”
 ```
