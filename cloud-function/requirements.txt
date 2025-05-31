@@ -4,7 +4,5 @@ langchain-community==0.2.6
 langchain-openai==0.1.14
 openai==1.35.10
 sqlalchemy==2.0.31
-sqlalchemy-bigquery==1.11.0
-google-cloud-bigquery==3.25.0
-google-cloud-bigquery-storage==2.25.0
+langchain-looker-agent==0.1.0
 google-cloud-secret-manager==2.20.0
