@@ -1,22 +1,22 @@
 # ra-databot
  
-# RA Databot Cloud Function
+# RA Databot Cloud Run Service
 
-This is a Google Cloud Function that uses LangChain and OpenAI to provide answers to specific data-related questions.
+This is a Google Cloud Run service that uses LangChain with the Looker SQL Agent and OpenAI to provide answers to specific data-related questions.
 
 ## Prerequisites
 
 - Google Cloud SDK
 - Python 3.10+
 - A Google Cloud project with billing enabled
-- A BigQuery dataset
+- Access to a Looker instance with the SQL Interface enabled
 - Environment variables set in Google Cloud Secrets Manager. 
 
 ## Environment Variables
 
-#### Secrets Manager
-- The package uses [Google Cloud Secrets Manager](https://cloud.google.com/security/products/secret-manager) to store environment variables.  
-- Functions in the config.py will to get the values for the Cloud Function to run.  
+-#### Secrets Manager
+- The package uses [Google Cloud Secrets Manager](https://cloud.google.com/security/products/secret-manager) to store environment variables.
+- Functions in the `config.py` file fetch the values needed for the Cloud Run service to run.
 - A sample .env template is included in the root of the package (.env_local_environment_template) for local development.  
 - See the Google Cloud [Quickstart](https://cloud.google.com/secret-manager/docs/create-secret-quickstart) documentation for further details.
 
@@ -48,31 +48,30 @@ To obtain an API key for your OpenAI API account, follow these steps:
     cd ra-databot
     ```
 
-2. Deploy the Cloud Function:
+2. Build and deploy the Cloud Run service:
 
     ```sh
-    gcloud functions deploy ra-databot \
-    --gen2 \
-    --runtime python310 \
-    --trigger-http \
-    --allow-unauthenticated \
-    --region YOUR_REGION \
-    --set-env-vars GCP_PROJECT=$GCP_PROJECT,BQ_DATASET=$BQ_DATASET,GCP_CREDENTIALS=$GCP_CREDENTIALS,OPEN_AI_MODEL=$OPEN_AI_MODEL,
-    OPENAI_API_KEY=$OPENAI_API_KEY
+    gcloud builds submit --tag YOUR_REGION-docker.pkg.dev/YOUR_PROJECT_ID/YOUR_REPOSITORY/ra-databot
+
+    gcloud run deploy ra-databot \
+      --image YOUR_REGION-docker.pkg.dev/YOUR_PROJECT_ID/YOUR_REPOSITORY/ra-databot \
+      --region YOUR_REGION \
+      --allow-unauthenticated \
+      --set-env-vars GCP_PROJECT=$GCP_PROJECT,LOOKER_INSTANCE_URL=$LOOKER_INSTANCE_URL,LOOKML_MODEL_NAME=$LOOKML_MODEL_NAME,LOOKER_CLIENT_ID=$LOOKER_CLIENT_ID,LOOKER_CLIENT_SECRET=$LOOKER_CLIENT_SECRET,LOOKER_JDBC_DRIVER_PATH=$LOOKER_JDBC_DRIVER_PATH,OPEN_AI_MODEL=$OPEN_AI_MODEL,OPENAI_API_KEY=$OPENAI_API_KEY
     ```
 
-3. Test the cloud function by using cURL to send a question:
+3. Test the Cloud Run service by using cURL to send a question:
 
     ```sh
     curl -X POST -H "Content-Type: application/json"  \
     --data '{"question":"and what was it in April 2024?"}' \
-    https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/ra-databot
+    https://YOUR_REGION-YOUR_PROJECT_ID.a.run.app
     ```
 
-4. Within the chatbot-plugin directory, edit the chatbot.js file and add your cloud function endpoint:
+4. Within the chatbot-plugin directory, edit the chatbot.js file and add your Cloud Run service endpoint:
 
     ```sh
-     fetch('https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/ra-databot', requestOptions)
+     fetch('https://YOUR_REGION-YOUR_PROJECT_ID.a.run.app', requestOptions)
       .then((response) => response.text())
       .then((data) => {
         console.log('Received data:', data);
@@ -113,20 +112,20 @@ The chatbot dialog will then be displayed and you can start asking questions of 
 
 1. User types in a question into the chatbot pop-up dialog interface, for example “How much were our sales in May 2024?”
 2. Chatbot Javascript sends the question to the chatbot back-end service via a REST API call
-3. Back-end service is a serverless Google Cloud Function which then takes the question and passes it to a LangChain SQL Agent which in-turn passes the question to OpenAI’s GPT4-Turbo LLM, prefixed with the prompt below (change this to be appropriate for your data) to come-up with a strategy to answer the user’s question:
+3. Back-end service is a serverless Cloud Run container which then takes the question and passes it to a LangChain SQL Agent which in-turn passes the question to OpenAI’s GPT4-Turbo LLM, prefixed with the prompt below (change this to be appropriate for your data) to come-up with a strategy to answer the user’s question:
 
 ```
     “You are a knowledgeable data analyst working for Rittman Analytics. Answer questions correctly, do not delete or alter any data and provide concise (no more than 10 words) commentary and analysis where appropriate. Use the 
 
-    ra-development.analytics_wide.monthly_company_metrics for monthly summary KPI questions, 
-    ra-development.analytics_wide.sales_leads for questions about sales leads,
-    ra-development.analytics_wide.website_traffic for questions about website performance,
-    ra-development.analytics_wide.sales_deals for sales pipeline and sales activity questions 
+     analytics.monthly_company_metrics explore for monthly summary KPI questions,
+     analytics.sales_leads explore for questions about sales leads,
+     analytics.website_traffic explore for questions about website performance,
+     analytics.sales_deals explore for sales pipeline and sales activity questions
 
     to answer this question, and no other tables. Do not include markdown-style triple backticks in the SQL you generate and try to use or validate. Question is:”
 ```
 
-4. The GPT4-Turbo LLM then sends back to the LangChain SQL agent running within the Cloud Function a series of SQL Agent tool invocations
+4. The GPT4-Turbo LLM then sends back to the LangChain SQL agent running within the Cloud Run service a series of SQL Agent tool invocations
 5. Those tool invocations first read the database data dictionary, then choose the most suitable table or tables to query, then sample those tables’ contents and then write, test and then execute the correct SQL query to return the answer to the user’s query
 6. The results of the SQL query are then sent-back to the GPT4-Turbo LLM so that it can add commentary around the query results
 7. Those results are then sent-back to the Javascript app plugin as the REST API response
@@ -158,7 +157,7 @@ const requestOptions = {
     };
 ```
 
-4. Then in the cloud function back-end we include the request to filter the results by that user ID for tables that have a column for user ID; in this example I have a table that contains author names and we apply the filter to that table's queries:
+4. Then in the Cloud Run service back-end we include the request to filter the results by that user ID for tables that have a column for user ID; in this example I have a table that contains author names and we apply the filter to that table's queries:
 
 ```
     question = instruction + """ and filter results by authorName = """ + (request_json or request_args).get('user_id') + """ if that column is present in the table being queried. Question is: """ + (request_json or request_args).get('question')
@@ -171,7 +170,7 @@ The code has been updated to secure access to the underlying REST API now, using
 Now if you try and access the REST API and return an answer, like this:
 ```
 curl -X POST \
-  https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/ra-databot \
+  https://YOUR_REGION-YOUR_PROJECT_ID.a.run.app \
   -H "Content-Type: application/json" \
   -d '{"user_id":"Mark Rittman","question":"What was our sales in May 2024?"}'
 ```
@@ -183,7 +182,7 @@ Unauthorized%
 If you include the API key in the X-API-KEY header, it now works:
 ```
 curl -X POST \
-  https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/ra-databot \
+  https://YOUR_REGION-YOUR_PROJECT_ID.a.run.app \
   -H "Content-Type: application/json" \
   -H "X-API-Key: API_KEY" \
   -d '{"user_id":"Mark Rittman","question":"What was our sales in May 2024?"}'
@@ -195,7 +194,7 @@ Sales in May 2024 were GBP 138,671.78.%
 
 The way we implemented this was as follows:
 
-1. We added the following to the cloud function code:
+1. We added the following to the Cloud Run service code:
 ```
 from google.cloud import secretmanager
 
@@ -213,7 +212,7 @@ def validate_api_key(request):
     return api_key == valid_api_key
 ```
 
-and then the code to return the cloud function reponse makes this additional check (the "if not validate_api_key(request)..." part)
+and then the code to return the Cloud Run response makes this additional check (the "if not validate_api_key(request)..." part)
 
 ```
 @functions_framework.http
@@ -251,7 +250,7 @@ To create the API_KEY secret, we followed these steps:
 2. Go to the Secret Manager in the Google Cloud Console.
 3. Create a new secret named "API_KEY" and store your generated API key as its value.
 
-The chatbot.jss file was updated to call the cloud function REST API:
+The chatbot.js file was updated to call the Cloud Run REST API:
 
 ```
 function submitQuestion(question) {
@@ -266,7 +265,7 @@ function submitQuestion(question) {
     body: JSON.stringify({ user_id: userId, question: `${chatHistory}User: ${question}` })
   };
 
-  fetch('YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/ra-databot', requestOptions)
+  fetch('YOUR_REGION-YOUR_PROJECT_ID.a.run.app', requestOptions)
     .then((response) => response.text())
     .then((data) => {
       console.log('Received data:', data);
@@ -282,10 +281,10 @@ function submitQuestion(question) {
 
 Note that to securely use the X-API-Key with the JavaScript chatbot dialog, you should not include the API key directly in the client-side JavaScript.
 
-Instead, you should set up a server-side proxy or a backend API that will add the X-API-Key to the request before forwarding it to the Cloud Function, by
-1. Setting up a server-side API (e.g., using Node.js, Python, etc.) that will act as a proxy between your frontend and the Cloud Function.
-2. Modifing the Javascript client-side code to send requests to your proxy server instead of directly to the Cloud Function.
-3. On the proxy server, add the X-API-Key to the request headers before forwarding it to the Cloud Function.
+Instead, you should set up a server-side proxy or a backend API that will add the X-API-Key to the request before forwarding it to the Cloud Run service, by
+1. Setting up a server-side API (e.g., using Node.js, Python, etc.) that will act as a proxy between your frontend and the Cloud Run service.
+2. Modifing the Javascript client-side code to send requests to your proxy server instead of directly to the Cloud Run service.
+3. On the proxy server, add the X-API-Key to the request headers before forwarding it to the Cloud Run service.
 
-There are other methods to secure access to a Google Cloud Function REST API but they are really outside the scope of this code example (and something you'd really want to discuss and have implemented by your dev team).
+There are other methods to secure access to a Google Cloud Run REST API but they are really outside the scope of this code example (and something you'd really want to discuss and have implemented by your dev team).
 
