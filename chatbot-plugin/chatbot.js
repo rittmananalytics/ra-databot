@@ -113,9 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const requestOptions = {
       method: 'POST',
-      headers: { 
-      'Content-Type': 'application/json',
-      'X-API-Key': 'API_KEY' 
+      headers: {
+      'Content-Type': 'application/json'
       },
       body: JSON.stringify({ user_id: userId, question: `${chatHistory}User: ${question}` })  // Include user ID in the request body
     };
