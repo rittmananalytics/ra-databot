@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
       body: JSON.stringify({ user_id: userId, question: `${chatHistory}User: ${question}` })  // Include user ID in the request body
     };
 
-    fetch('YOUR_REGION-YOUR_PROJECT_ID/ra-databot', requestOptions)
+    fetch('https://YOUR_REGION-YOUR_PROJECT_ID.a.run.app', requestOptions)
       .then((response) => response.text())
       .then((data) => {
         console.log('Received data:', data);
